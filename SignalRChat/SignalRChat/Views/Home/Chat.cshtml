@@ -63,7 +63,7 @@
 
         <h1 class="h3 mb-3">Conversaciones</h1>
 
-        <div class="form-group"> 
+        <div class="form-group">
             <label for="exampleFormControlTextarea1"> Usuario: </label>
             <input type="text" id="usuario" />
 
@@ -78,8 +78,7 @@
                     <div class="px-4 d-none d-md-block">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
-                                <label for="exampleFormControlTextarea1">Escriba aqui</label>
-                                <textarea class="form-control" id="txtchatenviar" onkeypress="pulsar(event)"></textarea> 
+
 
                             </div>
 
@@ -88,42 +87,47 @@
 
                     <div class="flex-grow-0 py-3 px-4 border-top">
                         <div class="input-group">
+                            <textarea class="form-control" id="txtchatenviar" onkeypress="pulsar(event)"></textarea>
+                        </div>
+                        <br>
+                        <div class="input-group">
                             <button type="submit" class="btn btn-primary" id="btnenviar">Enviar</button>
-                            <br>
+
                             <button type="submit" class="btn btn-secondary" id="btnborrar">Borrar</button>
                         </div>
                     </div>
 
                 </div>
 
-                    <div class="col-12 col-lg-7 col-xl-9">
+                <div class="col-12 col-lg-7 col-xl-9">
 
 
-                        <div class="position-relative">
-                            <div id="ControlMensajes" class="chat-messages p-4">
+                    <div class="position-relative">
+                        <div id="ControlMensajes" class="chat-messages p-4">
 
-                                
 
-                            </div>
+
                         </div>
-
                     </div>
+
                 </div>
             </div>
+        </div>
     </div>
 </main>
 
- 
-
-    
-    <ul id="discussion">
-    </ul>
 
 
 
-    <input type="hidden" id="displayname" />
- 
+<ul id="discussion">
+</ul>
+
+
+
+<input type="hidden" id="displayname" />
+
 @section scripts {
+    <script src="~/Scripts/push.min.js"></script>
     <!--Script references. -->
     <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
     <!--Reference the SignalR library. -->
@@ -132,51 +136,47 @@
     <script src="~/signalr/hubs"></script>
     <!--SignalR script to update the chat page and send messages.-->
     <script>
+        Push.Permission.request();
         $(function () {
             // Reference the auto-generated proxy for the hub.
             var chat = $.connection.chatHub;
             // Create a function that the hub can call back to display messages.
-            chat.client.addNewMessageToPage = function (name, message) {
-                // Add the message to the page.
-                //$('#discussion').append('<li><strong>' + htmlEncode(name)
-                //    + '</strong>: ' + htmlEncode(message) + '</li>');
-
-                //$('#ControlMensajes').append('<li><strong>' + htmlEncode(name)
-                //    + '</strong>: ' + htmlEncode(message) + '</li>');
+            chat.client.addNewMessageToPage = function (name, message, tiempo) {
 
                 if ($('#displayname').val() === name) {
                     $('#ControlMensajes').append('<div class="chat-message-right pb-4">' +
                         ' <div>' +
                         '  <img src="../../Content/img/avatar5.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">' +
-                        ' <div class="text-muted small text-nowrap mt-2" > 2: 33 am</div > ' +
+                        ' <div class="text-muted small text-nowrap mt-2" > ' + tiempo + '</div > ' +
                         ' </div>' +
                         ' <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">' +
                         '   <div class="font-weight-bold mb-1">' + htmlEncode(name) + '</div>' +
                         htmlEncode(message) +
                         '</div>' +
                         ' </div>');
-}
-                else
-                {
+                }
+                else {
                     $('#ControlMensajes').append('<div class="chat-message-left pb-4">' +
                         ' <div>' +
                         '  <img src="../../Content/img/avatar2.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">' +
-                        ' <div class="text-muted small text-nowrap mt-2" > 2: 33 am</div > ' +
+                        ' <div class="text-muted small text-nowrap mt-2" > ' + tiempo + '</div > ' +
                         ' </div>' +
                         ' <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">' +
                         '   <div class="font-weight-bold mb-1">' + htmlEncode(name) + '</div>' +
                         htmlEncode(message) +
                         '</div>' +
                         ' </div>');
-                } 
+                    notificar(name);
+                }
 
-                $("#ControlMensajes").animate({ scrollTop: $('#ControlMensajes')[0].scrollHeight }, 10); 
+                $("#ControlMensajes").animate({ scrollTop: $('#ControlMensajes')[0].scrollHeight }, 10);
+               
 
             };
             // Get the user name and store it to prepend to messages.
             $('#displayname').val($('#usuario').val());
             // Set initial focus to message input box.
-            $('#txtchatenviar').focus(); 
+            $('#txtchatenviar').focus();
         });
         // This optional function html-encodes messages for display in the page.
         function htmlEncode(value) {
@@ -198,7 +198,7 @@
             }
         }
 
-        
+
         $("#btnenviar").on("click", function (event) {
             $.connection.hub.start().done(function () {
                 var chat = $.connection.chatHub;
@@ -210,8 +210,24 @@
             });
         });
 
-        $("#btnborrar").on("click", function (event) { 
-            document.getElementById("ControlMensajes").innerHTML = "";  
+        $("#btnborrar").on("click", function (event) {
+            document.getElementById("ControlMensajes").innerHTML = "";
         });
+
+        function notificar(name) {
+
+           
+            Push.create('Chat Mario Gol', {
+                body: 'A caba de recibir un mensaje de: '+ name,
+                icon: '../Content/img/descarga.png',
+                timeout: 8000,               // Timeout before notification closes automatically.
+                vibrate: [100, 100, 100],    // An array of vibration pulses for mobile devices.
+                onClick: function () {
+                    // Callback for when the notification is clicked. 
+                     
+                }
+            });
+
+        }
     </script>
 }
