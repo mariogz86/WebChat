@@ -2,14 +2,127 @@
 @{
     ViewBag.Title = "Chat";
 }
-<h2>Chat</h2>
-<div class="container">
-    <input type="text" id="message" />
-    <input type="button" id="sendmessage" value="Send" />
-    <input type="hidden" id="displayname" />
+<style>
+
+
+    body {
+        margin-top: 20px;
+    }
+
+    .chat-online {
+        color: #34ce57
+    }
+
+    .chat-offline {
+        color: #e4606d
+    }
+
+    .chat-messages {
+        display: flex;
+        flex-direction: column;
+        max-height: 400px;
+        overflow-y: scroll
+    }
+
+    .chat-message-left,
+    .chat-message-right {
+        display: flex;
+        flex-shrink: 0
+    }
+
+    .chat-message-left {
+        margin-right: auto
+    }
+
+    .chat-message-right {
+        flex-direction: row-reverse;
+        margin-left: auto
+    }
+
+    .py-3 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    .px-4 {
+        padding-right: 1.5rem !important;
+        padding-left: 1.5rem !important;
+    }
+
+    .flex-grow-0 {
+        flex-grow: 0 !important;
+    }
+
+    .border-top {
+        border-top: 1px solid #dee2e6 !important;
+    }
+</style>
+
+<main class="content">
+    <div class="container p-0">
+
+        <h1 class="h3 mb-3">Conversaciones</h1>
+
+        <div class="form-group"> 
+            <label for="exampleFormControlTextarea1"> Usuario: </label>
+            <input type="text" id="usuario" />
+
+        </div>
+        <br>
+
+        <div class="card">
+            <div class="row g-0">
+
+                <div class="col-12 col-lg-5 col-xl-3 border-right">
+
+                    <div class="px-4 d-none d-md-block">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <label for="exampleFormControlTextarea1">Escriba aqui</label>
+                                <textarea class="form-control" id="txtchatenviar" onkeypress="pulsar(event)"></textarea> 
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="flex-grow-0 py-3 px-4 border-top">
+                        <div class="input-group">
+                            <button type="submit" class="btn btn-primary" id="btnenviar">Enviar</button>
+                            <br>
+                            <button type="submit" class="btn btn-secondary" id="btnborrar">Borrar</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                    <div class="col-12 col-lg-7 col-xl-9">
+
+
+                        <div class="position-relative">
+                            <div id="ControlMensajes" class="chat-messages p-4">
+
+                                
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
+</main>
+
+ 
+
+    
     <ul id="discussion">
     </ul>
-</div>
+
+
+
+    <input type="hidden" id="displayname" />
+ 
 @section scripts {
     <!--Script references. -->
     <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
@@ -25,27 +138,80 @@
             // Create a function that the hub can call back to display messages.
             chat.client.addNewMessageToPage = function (name, message) {
                 // Add the message to the page.
-                $('#discussion').append('<li><strong>' + htmlEncode(name)
-                    + '</strong>: ' + htmlEncode(message) + '</li>');
+                //$('#discussion').append('<li><strong>' + htmlEncode(name)
+                //    + '</strong>: ' + htmlEncode(message) + '</li>');
+
+                //$('#ControlMensajes').append('<li><strong>' + htmlEncode(name)
+                //    + '</strong>: ' + htmlEncode(message) + '</li>');
+
+                if ($('#displayname').val() === name) {
+                    $('#ControlMensajes').append('<div class="chat-message-right pb-4">' +
+                        ' <div>' +
+                        '  <img src="../../Content/img/avatar5.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">' +
+                        ' <div class="text-muted small text-nowrap mt-2" > 2: 33 am</div > ' +
+                        ' </div>' +
+                        ' <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">' +
+                        '   <div class="font-weight-bold mb-1">' + htmlEncode(name) + '</div>' +
+                        htmlEncode(message) +
+                        '</div>' +
+                        ' </div>');
+}
+                else
+                {
+                    $('#ControlMensajes').append('<div class="chat-message-left pb-4">' +
+                        ' <div>' +
+                        '  <img src="../../Content/img/avatar2.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">' +
+                        ' <div class="text-muted small text-nowrap mt-2" > 2: 33 am</div > ' +
+                        ' </div>' +
+                        ' <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">' +
+                        '   <div class="font-weight-bold mb-1">' + htmlEncode(name) + '</div>' +
+                        htmlEncode(message) +
+                        '</div>' +
+                        ' </div>');
+                } 
+
+                $("#ControlMensajes").animate({ scrollTop: $('#ControlMensajes')[0].scrollHeight }, 10); 
+
             };
             // Get the user name and store it to prepend to messages.
-            $('#displayname').val(prompt('Enter your name:', ''));
+            $('#displayname').val($('#usuario').val());
             // Set initial focus to message input box.
-            $('#message').focus();
-            // Start the connection.
-            $.connection.hub.start().done(function () {
-                $('#sendmessage').click(function () {
-                    // Call the Send method on the hub.
-                    chat.server.send($('#displayname').val(), $('#message').val());
-                    // Clear text box and reset focus for next comment.
-                    $('#message').val('').focus();
-                });
-            });
+            $('#txtchatenviar').focus(); 
         });
         // This optional function html-encodes messages for display in the page.
         function htmlEncode(value) {
             var encodedValue = $('<div />').text(value).html();
             return encodedValue;
         }
+
+        function pulsar(e) {
+            if (e.keyCode === 13 && !e.shiftKey) {
+                e.preventDefault();
+                $.connection.hub.start().done(function () {
+                    var chat = $.connection.chatHub;
+                    $('#displayname').val($('#usuario').val());
+                    // Call the Send method on the hub.
+                    chat.server.send($('#displayname').val(), $('#txtchatenviar').val());
+                    // Clear text box and reset focus for next comment.
+                    $('#txtchatenviar').val('').focus();
+                });
+            }
+        }
+
+        
+        $("#btnenviar").on("click", function (event) {
+            $.connection.hub.start().done(function () {
+                var chat = $.connection.chatHub;
+                $('#displayname').val($('#usuario').val());
+                // Call the Send method on the hub.
+                chat.server.send($('#displayname').val(), $('#txtchatenviar').val());
+                // Clear text box and reset focus for next comment.
+                $('#txtchatenviar').val('').focus();
+            });
+        });
+
+        $("#btnborrar").on("click", function (event) { 
+            document.getElementById("ControlMensajes").innerHTML = "";  
+        });
     </script>
 }

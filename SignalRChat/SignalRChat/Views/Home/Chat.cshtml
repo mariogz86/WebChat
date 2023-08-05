@@ -79,14 +79,21 @@
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
                                 <label for="exampleFormControlTextarea1">Escriba aqui</label>
-                                <textarea class="form-control" id="txtchatenviar" onkeypress="pulsar(event)"></textarea>
-                                <br>
-                                <button type="submit" class="btn btn-primary" id="btnenviar">Enviar</button>
-                                <button type="submit" class="btn btn-secondary" id="btnborrar">Borrar Conversacion</button>
+                                <textarea class="form-control" id="txtchatenviar" onkeypress="pulsar(event)"></textarea> 
 
-                            </div>  
+                            </div>
+
                         </div>
-                    </div> 
+                    </div>
+
+                    <div class="flex-grow-0 py-3 px-4 border-top">
+                        <div class="input-group">
+                            <button type="submit" class="btn btn-primary" id="btnenviar">Enviar</button>
+                            <br>
+                            <button type="submit" class="btn btn-secondary" id="btnborrar">Borrar</button>
+                        </div>
+                    </div>
+
                 </div>
 
                     <div class="col-12 col-lg-7 col-xl-9">
@@ -153,7 +160,7 @@
                 {
                     $('#ControlMensajes').append('<div class="chat-message-left pb-4">' +
                         ' <div>' +
-                        '  <img src="../../Content/img/avatar3.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">' +
+                        '  <img src="../../Content/img/avatar2.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">' +
                         ' <div class="text-muted small text-nowrap mt-2" > 2: 33 am</div > ' +
                         ' </div>' +
                         ' <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">' +
