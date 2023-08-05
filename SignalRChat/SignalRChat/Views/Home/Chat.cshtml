@@ -75,17 +75,7 @@
 
                 <div class="col-12 col-lg-5 col-xl-3 border-right">
 
-                    <div class="px-4 d-none d-md-block">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-
-
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="flex-grow-0 py-3 px-4 border-top">
+                   <div class="flex-grow-0 py-3 px-4 border-top">
                         <div class="input-group">
                             <textarea class="form-control" id="txtchatenviar" onkeypress="pulsar(event)"></textarea>
                         </div>
@@ -127,7 +117,7 @@
 <input type="hidden" id="displayname" />
 
 @section scripts {
-    <script src="~/Scripts/push.min.js"></script>
+    @*<script src="~/Scripts/push.min.js"></script>*@
     <!--Script references. -->
     <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
     <!--Reference the SignalR library. -->
@@ -136,7 +126,7 @@
     <script src="~/signalr/hubs"></script>
     <!--SignalR script to update the chat page and send messages.-->
     <script>
-        Push.Permission.request();
+      
         $(function () {
             // Reference the auto-generated proxy for the hub.
             var chat = $.connection.chatHub;
@@ -215,18 +205,32 @@
         });
 
         function notificar(name) {
-
+            //Push.Permission.request();
            
-            Push.create('Chat Mario Gol', {
-                body: 'A caba de recibir un mensaje de: '+ name,
-                icon: '../Content/img/descarga.png',
-                timeout: 8000,               // Timeout before notification closes automatically.
-                vibrate: [100, 100, 100],    // An array of vibration pulses for mobile devices.
-                onClick: function () {
-                    // Callback for when the notification is clicked. 
-                     
-                }
-            });
+            //Push.create('Chat Mario Gol', {
+            //    body: 'A caba de recibir un mensaje de: '+ name,
+            //    icon: '../Content/img/descarga.png',
+            //    timeout: 8000,               // Timeout before notification closes automatically.
+            //    vibrate: [100, 100, 100],    // An array of vibration pulses for mobile devices.
+            //    onClick: function () {
+            //        // Callback for when the notification is clicked.
+
+            //    }
+            //});
+
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission();
+            } else {
+
+                var notification = new Notification("Window",
+                    {
+                        icon: "../Content/img/descarga.png",
+                        body: "Nuevo Mensaje....."
+                    });
+
+
+
+            } 
 
         }
     </script>
